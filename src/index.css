@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+@theme {
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-float: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-100 font-sans antialiased overflow-x-hidden min-h-screen;
+    background-image: 
+      radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(20, 184, 166, 0.15) 0px, transparent 50%),
+      radial-gradient(at 50% 100%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
+      linear-gradient(to bottom, #030712, #0b0f19);
+  }
+}
+
+/* Glassmorphism custom classes */
+.glass-panel {
+  @apply bg-slate-900/40 backdrop-blur-xl border border-slate-800/60 shadow-xl rounded-2xl transition-all duration-300;
+}
+
+.glass-panel-hover {
+  @apply hover:bg-slate-900/50 hover:border-slate-700/60 hover:shadow-purple-500/5 hover:shadow-2xl;
+}
+
+/* Text glow */
+.text-glow-purple {
+  text-shadow: 0 0 12px rgba(168, 85, 247, 0.4);
+}
+
+.text-glow-teal {
+  text-shadow: 0 0 12px rgba(20, 184, 166, 0.4);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-800/80 rounded-full hover:bg-slate-700/80;
+}
