@@ -9,7 +9,7 @@ const PRIORITY_META = {
   high: { label: 'Alta', activeStyle: 'priorityHighActive', textStyle: 'priorityHighText', borderClass: '#f43f5e' },
 };
 
-export default function Tasks() {
+export default function Tasks({ theme }) {
   const [tasks, setTasks] = useState([]);
   const [inputText, setInputText] = useState('');
   const [priority, setPriority] = useState('medium');
@@ -80,10 +80,10 @@ export default function Tasks() {
   });
 
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { backgroundColor: theme.cardBackground, borderColor: theme.cardBorder, shadowColor: theme.shadowColor }]}>
       <View style={styles.header}>
-        <Text style={styles.title}>Foco de Hoje</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.title, { color: theme.textPrimary }]}>Foco de Hoje</Text>
+        <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
           {tasks.filter(t => !t.completed).length} pendente(s)
         </Text>
       </View>
@@ -94,21 +94,21 @@ export default function Tasks() {
           value={inputText}
           onChangeText={setInputText}
           placeholder="Adicionar nova tarefa..."
-          placeholderTextColor="#64748b"
-          style={styles.input}
+          placeholderTextColor={theme.placeholder}
+          style={[styles.input, { backgroundColor: theme.inputBackground, borderColor: theme.border, color: theme.textPrimary }]}
         />
         <TouchableOpacity
           onPress={addTask}
           style={styles.addButton}
           activeOpacity={0.8}
         >
-          <Plus size={20} color="#cbd5e1" />
+          <Plus size={20} color="#a855f7" />
         </TouchableOpacity>
       </View>
 
       {/* Priority Selection Pills */}
       <View style={styles.prioritySelector}>
-        <Text style={styles.priorityLabel}>Prioridade:</Text>
+        <Text style={[styles.priorityLabel, { color: theme.textSecondary }]}>Prioridade:</Text>
         <View style={styles.pillsContainer}>
           {Object.entries(PRIORITY_META).map(([key, meta]) => (
             <TouchableOpacity
@@ -116,6 +116,7 @@ export default function Tasks() {
               onPress={() => setPriority(key)}
               style={[
                 styles.pill,
+                { backgroundColor: theme.inputBackground, borderColor: theme.border },
                 priority === key && styles[meta.activeStyle]
               ]}
               activeOpacity={0.7}
@@ -132,19 +133,20 @@ export default function Tasks() {
       </View>
 
       {/* Filters bar */}
-      <View style={styles.filtersBar}>
+      <View style={[styles.filtersBar, { borderBottomColor: theme.border }]}>
         {['all', 'active', 'completed'].map((f) => (
           <TouchableOpacity
             key={f}
             onPress={() => setFilter(f)}
             style={[
               styles.filterButton,
-              filter === f && styles.filterButtonActive
+              filter === f && [styles.filterButtonActive, { backgroundColor: theme.border }]
             ]}
           >
             <Text style={[
               styles.filterText,
-              filter === f && styles.filterTextActive
+              { color: theme.textMuted },
+              filter === f && [styles.filterTextActive, { color: theme.presetTextActive }]
             ]}>
               {f === 'all' ? 'Tudo' : f === 'active' ? 'Ativas' : 'Concluídas'}
             </Text>
@@ -156,7 +158,7 @@ export default function Tasks() {
       <ScrollView style={styles.listContainer} showsVerticalScrollIndicator={false}>
         {filteredTasks.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Nenhuma tarefa encontrada.</Text>
+            <Text style={[styles.emptyText, { color: theme.textMuted }]}>Nenhuma tarefa encontrada.</Text>
           </View>
         ) : (
           filteredTasks.map((task) => (
@@ -164,7 +166,10 @@ export default function Tasks() {
               key={task.id}
               style={[
                 styles.taskItem,
-                task.completed ? styles.taskItemCompleted : styles.taskItemActive
+                { backgroundColor: theme.taskItemBg },
+                task.completed 
+                  ? [styles.taskItemCompleted, { borderColor: theme.border }] 
+                  : [styles.taskItemActive, { borderColor: theme.border }]
               ]}
             >
               <TouchableOpacity
@@ -175,21 +180,22 @@ export default function Tasks() {
                 {task.completed ? (
                   <CheckCircle2 size={20} color="#2dd4bf" />
                 ) : (
-                  <Circle size={20} color="#64748b" />
+                  <Circle size={20} color={theme.textMuted} />
                 )}
               </TouchableOpacity>
 
               <Text
                 style={[
                   styles.taskText,
-                  task.completed && styles.taskTextCompleted
+                  { color: theme.textPrimary },
+                  task.completed && [styles.taskTextCompleted, { color: theme.textMuted }]
                 ]}
                 numberOfLines={2}
               >
                 {task.text}
               </Text>
 
-              <View style={styles.taskMeta}>
+              <View style={task.completed ? { opacity: 0.5 } : styles.taskMeta}>
                 <View style={[
                   styles.priorityTag,
                   { borderColor: PRIORITY_META[task.priority].borderClass + '30', backgroundColor: PRIORITY_META[task.priority].borderClass + '10' }

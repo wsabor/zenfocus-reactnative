@@ -9,7 +9,7 @@ const TIMER_PRESETS = {
   longBreak: { label: 'Pausa Longa', minutes: 15 },
 };
 
-export default function Timer({ playChime }) {
+export default function Timer({ playChime, theme }) {
   const [mode, setMode] = useState('focus');
   const [timeLeft, setTimeLeft] = useState(TIMER_PRESETS.focus.minutes * 60);
   const [isActive, setIsActive] = useState(false);
@@ -81,36 +81,40 @@ export default function Timer({ playChime }) {
   };
 
   return (
-    <View style={styles.card}>
-      {/* Sound Toggle Icon */}
-      <TouchableOpacity 
-        onClick={() => setSoundEnabled(!soundEnabled)} 
-        onPress={() => setSoundEnabled(!soundEnabled)}
-        style={styles.soundButton}
-        activeOpacity={0.7}
-      >
-        {soundEnabled ? (
-          <Bell size={20} color="#94a3b8" />
-        ) : (
-          <BellOff size={20} color="#475569" />
-        )}
-      </TouchableOpacity>
+    <View style={[styles.card, { backgroundColor: theme.cardBackground, borderColor: theme.cardBorder, shadowColor: theme.shadowColor }]}>
+      {/* Card Header with Title and Sound Toggle */}
+      <View style={styles.cardHeader}>
+        <Text style={[styles.cardTitle, { color: theme.textSecondary }]}>Temporizador</Text>
+        <TouchableOpacity 
+          onClick={() => setSoundEnabled(!soundEnabled)} 
+          onPress={() => setSoundEnabled(!soundEnabled)}
+          style={styles.soundButton}
+          activeOpacity={0.7}
+        >
+          {soundEnabled ? (
+            <Bell size={18} color={theme.textSecondary} />
+          ) : (
+            <BellOff size={18} color={theme.textMuted} />
+          )}
+        </TouchableOpacity>
+      </View>
 
       {/* Mode Switches */}
-      <View style={styles.presetsContainer}>
+      <View style={[styles.presetsContainer, { backgroundColor: theme.presetBackground, borderColor: theme.border }]}>
         {Object.entries(TIMER_PRESETS).map(([key, config]) => (
           <TouchableOpacity
             key={key}
             onPress={() => setMode(key)}
             style={[
               styles.presetButton,
-              mode === key && styles.presetButtonActive
+              mode === key && [styles.presetButtonActive, { backgroundColor: theme.presetActive, borderColor: theme.presetActiveBorder }]
             ]}
             activeOpacity={0.8}
           >
             <Text style={[
               styles.presetText,
-              mode === key && styles.presetTextActive
+              { color: theme.textSecondary },
+              mode === key && [styles.presetTextActive, { color: theme.presetTextActive }]
             ]}>
               {config.label}
             </Text>
@@ -126,7 +130,7 @@ export default function Timer({ playChime }) {
             cx="110"
             cy="110"
             r={radius}
-            stroke="#1e293b"
+            stroke={theme.innerCircleStroke}
             strokeWidth="8"
             fill="transparent"
           />
@@ -146,10 +150,10 @@ export default function Timer({ playChime }) {
 
         {/* Numeric Display inside Circle */}
         <View style={styles.timeTextContainer}>
-          <Text style={styles.timeText}>
+          <Text style={[styles.timeText, { color: theme.textPrimary }]}>
             {formatTime(timeLeft)}
           </Text>
-          <Text style={styles.modeText}>
+          <Text style={[styles.modeText, { color: theme.textSecondary }]}>
             {mode === 'focus' ? 'Foco total' : 'Relaxamento'}
           </Text>
         </View>
@@ -159,10 +163,10 @@ export default function Timer({ playChime }) {
       <View style={styles.controlsContainer}>
         <TouchableOpacity
           onPress={resetTimer}
-          style={styles.secondaryButton}
+          style={[styles.secondaryButton, { backgroundColor: theme.secondaryButtonBg, borderColor: theme.secondaryButtonBorder }]}
           activeOpacity={0.7}
         >
-          <RotateCcw size={20} color="#cbd5e1" />
+          <RotateCcw size={20} color={theme.secondaryButtonIcon} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -182,10 +186,10 @@ export default function Timer({ playChime }) {
 
         <TouchableOpacity
           onPress={skipTimer}
-          style={styles.secondaryButton}
+          style={[styles.secondaryButton, { backgroundColor: theme.secondaryButtonBg, borderColor: theme.secondaryButtonBorder }]}
           activeOpacity={0.7}
         >
-          <SkipForward size={20} color="#cbd5e1" />
+          <SkipForward size={20} color={theme.secondaryButtonIcon} />
         </TouchableOpacity>
       </View>
     </View>
@@ -207,14 +211,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 16,
     elevation: 4,
-    position: 'relative',
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 16,
+  },
+  cardTitle: {
+    fontSize: 12,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
   soundButton: {
-    position: 'absolute',
-    top: 16,
-    right: 16,
-    padding: 8,
-    zIndex: 10,
+    padding: 6,
   },
   presetsContainer: {
     flexDirection: 'row',

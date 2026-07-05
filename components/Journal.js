@@ -11,7 +11,7 @@ const MOODS = [
   { emoji: '😴', label: 'Cansado', color: '#64748b' }
 ];
 
-export default function Journal() {
+export default function Journal({ theme }) {
   const [entries, setEntries] = useState([]);
   const [text, setText] = useState('');
   const [selectedMood, setSelectedMood] = useState('🍃');
@@ -85,18 +85,18 @@ export default function Journal() {
   };
 
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { backgroundColor: theme.cardBackground, borderColor: theme.cardBorder, shadowColor: theme.shadowColor }]}>
       <View style={styles.header}>
         <View style={styles.titleContainer}>
           <BookOpen size={20} color="#a855f7" />
-          <Text style={styles.title}>Reflexões & Intenções</Text>
+          <Text style={[styles.title, { color: theme.textPrimary }]}>Reflexões & Intenções</Text>
         </View>
-        <Text style={styles.subtitle}>Acompanhe sua mente</Text>
+        <Text style={[styles.subtitle, { color: theme.textSecondary }]}>Acompanhe sua mente</Text>
       </View>
 
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         {/* Mood Picker */}
-        <Text style={styles.sectionLabel}>Como você se sente agora?</Text>
+        <Text style={[styles.sectionLabel, { color: theme.textSecondary }]}>Como você se sente agora?</Text>
         <View style={styles.moodContainer}>
           {MOODS.map((mood) => (
             <TouchableOpacity
@@ -104,6 +104,7 @@ export default function Journal() {
               onPress={() => setSelectedMood(mood.emoji)}
               style={[
                 styles.moodButton,
+                { backgroundColor: theme.inputBackground, borderColor: theme.border },
                 selectedMood === mood.emoji && styles.moodButtonActive,
                 selectedMood === mood.emoji && { borderColor: mood.color + '40', backgroundColor: mood.color + '15' }
               ]}
@@ -112,7 +113,8 @@ export default function Journal() {
               <Text style={styles.moodEmoji}>{mood.emoji}</Text>
               <Text style={[
                 styles.moodLabel,
-                selectedMood === mood.emoji && { color: '#ffffff', fontWeight: '600' }
+                { color: theme.textMuted },
+                selectedMood === mood.emoji && { color: theme.textPrimary, fontWeight: '600' }
               ]}>
                 {mood.label}
               </Text>
@@ -125,10 +127,10 @@ export default function Journal() {
           value={text}
           onChangeText={setText}
           placeholder="O que está na sua mente hoje? Escreva suas intenções ou aprendizados..."
-          placeholderTextColor="#64748b"
+          placeholderTextColor={theme.placeholder}
           multiline
           numberOfLines={4}
-          style={styles.textInput}
+          style={[styles.textInput, { backgroundColor: theme.inputBackground, borderColor: theme.border, color: theme.textPrimary }]}
           textAlignVertical="top"
         />
 
@@ -142,20 +144,20 @@ export default function Journal() {
         </TouchableOpacity>
 
         {/* Entry History */}
-        <Text style={styles.sectionLabelHistory}>Registros Recentes</Text>
+        <Text style={[styles.sectionLabelHistory, { color: theme.textSecondary }]}>Registros Recentes</Text>
         {entries.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>Nenhum registro no diário ainda.</Text>
+            <Text style={[styles.emptyText, { color: theme.textMuted }]}>Nenhum registro no diário ainda.</Text>
           </View>
         ) : (
           entries.map((entry) => (
-            <View key={entry.id} style={styles.entryItem}>
+            <View key={entry.id} style={[styles.entryItem, { backgroundColor: theme.taskItemBg, borderColor: theme.border }]}>
               <View style={styles.entryHeader}>
                 <View style={styles.entryMeta}>
                   <Text style={styles.entryEmoji}>{entry.mood}</Text>
                   <View style={styles.dateContainer}>
-                    <Calendar size={12} color="#94a3b8" />
-                    <Text style={styles.entryDate}>{entry.date}</Text>
+                    <Calendar size={12} color={theme.textSecondary} />
+                    <Text style={[styles.entryDate, { color: theme.textSecondary }]}>{entry.date}</Text>
                   </View>
                 </View>
                 <TouchableOpacity
@@ -166,7 +168,7 @@ export default function Journal() {
                   <Trash2 size={14} color="#ef4444" />
                 </TouchableOpacity>
               </View>
-              <Text style={styles.entryText}>{entry.text}</Text>
+              <Text style={[styles.entryText, { color: theme.textPrimary }]}>{entry.text}</Text>
             </View>
           ))
         )}
